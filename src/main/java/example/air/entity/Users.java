@@ -88,4 +88,12 @@ public class Users implements UserDetails {
     public void setRoles(Set<Roles> roles) {
         this.roles = roles;
     }
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
 }
