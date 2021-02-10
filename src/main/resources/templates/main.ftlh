@@ -1,32 +1,53 @@
 <#import "parts/common.ftlh" as c>
-<#import "parts/loginAndRegistrftion.ftlh" as l>
+
 <@c.page>
-    <div>
-        <@l.logout>
-        </@l.logout>
-        <span><a href="/user">User list</a> </span>
-    </div>
-    <div>
-        <form method="post" action="add">
-            <input type="text" name="text" placeholder="Enter text">
-            <input type="text" name="tag" placeholder="Enter tag">
-            <input type="hidden" name="_csrf" value="${_csrf.token}">
-            <button type="submit">Add</button>
-        </form>
-    </div>
-    <div>Список сообщений</div>
-    <form method="get" action="main">
-        <input type="text" name="filter" value="${filter!""}">
-        <button type="submit">Find</button>
-    </form>
-    <#list messages as message>
-        <div>
-            <b>${message.id}</b>
-            <span>${message.text}</span>
-            <i>${message.tag}</i>
-            <strong>${message.authorName}</strong>
+    <div class="form-row">
+        <div class="form-group col-md-6">
+            <form method="get" action="/main" class="form-inline">
+                <input type="text" name="filter" class="form-control" value="${filter?ifExists}"
+                       placeholder="Search by tag">
+                <button type="submit" class="btn btn-primary ml-2">Search</button>
+            </form>
         </div>
-    <#else>
-        No message
-    </#list>
+    </div>
+
+    <a class="btn btn-primary" data-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
+        Message editor
+    </a>
+    <div class="collapse <#if message??>show</#if>" id="collapseExample">
+        <div class="form-group mt-3">
+            <form method="post" action="/add" enctype="multipart/form-data">
+                <div class="form-group">
+                    <input type="text" class="form-control ${(textError??)?string('is-invalid', '')}"
+                           value="<#if message??>${message.text}</#if>" name="text" placeholder="Введите сообщение" />
+                    <#if textError??>
+                        <div class="invalid-feedback">
+                            ${textError}
+                        </div>
+                    </#if>
+                </div>
+                <div class="form-group">
+                    <input type="text" class="form-control"
+                           value="<#if message??>${message.tag}</#if>" name="tag" placeholder="Тэг">
+                    <#if tagError??>
+                        <div class="invalid-feedback">
+                            ${tagError}
+                        </div>
+                    </#if>
+                </div>
+                <div class="form-group">
+                    <div class="custom-file">
+                        <input type="file" name="file" id="customFile">
+                        <label class="custom-file-label" for="customFile">Choose file</label>
+                    </div>
+                </div>
+                <input type="hidden" name="_csrf" value="${_csrf.token}" />
+
+                <div class="form-group">
+                    <button type="submit" class="btn btn-primary">Save message</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <#include "parts/messageList.ftlh"/>
 </@c.page>
