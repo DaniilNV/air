@@ -29,24 +29,31 @@ public class UserService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         Users user = userRepository.findByUsername(username);
-        if (user==null){
-            throw new UsernameNotFoundException ("User not found");
+        if (user == null) {
+            throw new UsernameNotFoundException("User not found");
         }
         return user;
     }
 
-    public boolean addUser(Users user) {
-        Users users = userRepository.findByUsername(user.getUsername());
-        if (users != null) {
-            return false;
+    public int addUser(Users user) {
+        Users user_1 = userRepository.findByUsername(user.getUsername());
+        Users user_2 = userRepository.findByEmail(user.getEmail());
+        if (user_1!=null && user_2!=null ) {
+            return 0;
+        }
+        if (user_1!=null ) {
+            return 1;
+        }
+        if (user_2!=null ) {
+            return 2;
         }
         user.setActive(false);
         user.setRoles(Collections.singleton(Roles.USER));
         user.setActivationCode(UUID.randomUUID().toString());
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-        userRepository.save(user);
         sendMessage(user);
-        return true;
+        userRepository.save(user);
+        return 3;
     }
 
     private void sendMessage(Users user) {
@@ -69,7 +76,7 @@ public class UserService implements UserDetailsService {
     }
 
     public List<Users> findAll() {
-        return userRepository.findAll();
+        return userRepository.findAllByActiveIsTrue();
     }
 
     public void saveUser(Users user, String username, Map<String, String> form) {

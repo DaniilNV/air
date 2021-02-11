@@ -11,5 +11,10 @@
             ${message}
         </div>
     </#if>
+    <#if ActivationCode??>
+        <div class="alert alert-${messageType}" role="alert">
+            ${ActivationCode}
+        </div>
+    </#if>
     <@l.login "/login" false/>
 </@c.page>

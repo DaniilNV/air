@@ -16,13 +16,13 @@ public class MessageService {
 
     public Page<MessageDto> messageList(Pageable pageable, String filter, Users user) {
         if (filter != null && !filter.isEmpty()) {
-            return messageRepository.findByTag(filter,pageable,user);
+            return messageRepository.findByTag(filter, pageable, user);
         } else {
             return messageRepository.findAll(pageable, user);
         }
     }
 
-    public Page<MessageDto> messageListForUser(Pageable pageable, Users currentUser, Users author) {
-        return messageRepository.findByUser(pageable, author, currentUser);
+    public Page<MessageDto> messageListForUser(Pageable pageable, Users author) {
+        return messageRepository.findByUser(pageable, author);
     }
 }

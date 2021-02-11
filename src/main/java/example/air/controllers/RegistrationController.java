@@ -76,12 +76,22 @@ public class RegistrationController {
             return "registration";
         }
 
-        if (!userService.addUser(user)) {
-            model.addAttribute("usernameError", "User exists!");
+        if (userService.addUser(user) == 0) {
+            model.addAttribute("usernameError", "Login exist!");
+            model.addAttribute("emailError", "Email exist!");
             return "registration";
         }
-
-        return "redirect:/login";
+        if (userService.addUser(user) == 1) {
+            model.addAttribute("usernameError", "Login exist!");
+            return "registration";
+        }
+        if (userService.addUser(user) == 2) {
+            model.addAttribute("emailError", "Email exist!");
+            return "registration";
+        }
+        model.addAttribute("messageType", "success");
+        model.addAttribute("ActivationCode","An activation code has been sent to your email.");
+        return "login";
     }
 
     @GetMapping("/activate/{code}")

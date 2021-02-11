@@ -7,7 +7,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
-import org.springframework.data.repository.query.Param;
 
 
 public interface MessageRepository extends CrudRepository<Message, Long> {
@@ -33,10 +32,10 @@ public interface MessageRepository extends CrudRepository<Message, Long> {
     @Query("select new example.air.entity.dto.MessageDto(" +
             "   m, " +
             "   count(ml), " +
-            "   sum(case when ml = :user then 1 else 0 end) > 0" +
+            "   sum(case when ml = :author then 1 else 0 end) > 0" +
             ") " +
             "from Message m left join m.likes ml " +
             "where m.author = :author " +
             "group by m")
-    Page<MessageDto> findByUser(Pageable pageable, Users author, Users user);
+    Page<MessageDto> findByUser(Pageable pageable, Users author);
 }

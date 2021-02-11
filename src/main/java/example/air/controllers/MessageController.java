@@ -62,11 +62,16 @@ public class MessageController {
     @PostMapping("/add")
     public String add(
             @AuthenticationPrincipal Users author,
+            @RequestParam(required = false) String filter,
             @Valid() Message message,
             BindingResult bindingResult,
             Model model,
-            @RequestParam MultipartFile file)
+            @RequestParam MultipartFile file,
+            @PageableDefault(sort = {"id"}, direction = Sort.Direction.DESC) Pageable pageable)
             throws IOException {
+        Page<MessageDto> page = messageService.messageList(pageable,filter,author);
+        model.addAttribute("url", "/main");
+        model.addAttribute("page", page);
         message.setAuthor(author);
         if (bindingResult.hasErrors()) {
             Map<String, String> errorsMap = UtilsController.getErrors(bindingResult);
@@ -106,7 +111,7 @@ public class MessageController {
             @RequestParam(required = false) Message message,
             @PageableDefault(sort = {"id"}, direction = Sort.Direction.DESC) Pageable pageable
     ) {
-        Page<MessageDto> page = messageService.messageListForUser(pageable,currentUser,author);
+        Page<MessageDto> page = messageService.messageListForUser(pageable,author);
         model.addAttribute("userChannel", author);
         model.addAttribute("subscriptionCount", author.getSubscriptions().size());
         model.addAttribute("subscribersCount", author.getSubscribers().size());
